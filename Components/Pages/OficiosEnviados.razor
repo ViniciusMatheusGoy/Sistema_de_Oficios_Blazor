@@ -1,0 +1,83 @@
+@page "/oficios-enviados"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles="admin,user")]
+@using GerenciamentoOficios.Models;
+
+
+<PageTitle>Oficios</PageTitle>
+
+<h3>Oficios Enviados</h3>
+
+<table class="table table-striped">
+            <thead>
+            <tr>
+                <th>Destinatário</th>
+                <th>Setor</th>
+                <th>Data de Envio</th>
+                <th>Data de Recebimento</th>
+                <th>Conteúdo</th>
+                <th>Status</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            @if (oficios == null || !oficios.Any())
+            {
+                <tr>
+                    <td colspan="6" class="text-center">Nenhum Ofício Listado</td>
+                </tr>
+            }
+            else
+            {
+                @foreach (var oficio in oficios)
+                {
+                    <tr>
+                        <td>@oficio.Destinatario</td>
+                        <td>@oficio.Destinatario.Setor</td>
+                        <td>@oficio.DataEnvio.ToShortDateString()</td>
+                        <td>@(oficio.DataRecebimento?.ToShortDateString() ?? "-")</td>
+                        <td>@oficio.Conteudo</td>
+                        <td><span class="badge @GetStatusClass(oficio.status.ToString())">@oficio.status</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-primary" @onclick="() => EditarOficio(oficio.ID)">
+                                <i class="bi bi-pencil"></i>
+                            </button>
+                            <button class="btn btn-sm btn-danger" @onclick="() => DeletarOficio(oficio.ID)">
+                                <i class="bi bi-trash"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            }
+        </tbody>
+</table>
+
+
+@code {
+    private List<Oficio>? oficios;
+
+    protected override void OnInitialized()
+    {
+        // Inicializar com dados de exemplo
+        oficios = new List<Oficio>();
+    }
+
+    private string GetStatusClass(string status) => status?.ToLower() switch
+    {
+        "enviado" => "bg-primary",
+        "recebido" => "bg-success",
+        "pendente" => "bg-warning",
+        "cancelado" => "bg-danger",
+        _ => "bg-secondary"
+    };
+
+    private void EditarOficio(int id)
+    {
+        // Implementar lógica de edição
+    }
+
+    private void DeletarOficio(int id)
+    {
+        // Implementar lógica de exclusão
+    }
+}

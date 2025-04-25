@@ -1,0 +1,54 @@
+﻿@inherits LayoutComponentBase
+
+
+
+<div class="page">
+    <div class="sidebar">
+        <NavMenu />
+    </div>
+
+    <main>
+        <div class="top-row px-4">
+        <AuthorizeView>
+            <NotAuthorized>
+                <a href="/login">Login</a>
+            </NotAuthorized>
+            <Authorized>
+                <span>@Username</span>
+                <a href="/logout">Logout</a>
+            </Authorized>
+        </AuthorizeView>
+        </div>
+
+        <article class="content px-4">
+            @Body
+        </article>
+    </main>
+</div>
+
+<div id="blazor-error-ui">
+    An unhandled error has occurred.
+    <a href="" class="reload">Reload</a>
+    <a class="dismiss">🗙</a>
+</div>
+
+
+
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState>? authenticationStateTask { get; set; }
+    public bool logged = true;
+    public string? Username { get; set; }
+    
+    protected override async Task OnInitializedAsync(){
+        await GetUsername();
+        Console.WriteLine($"Nome: {Username}");
+    }
+    private async Task GetUsername(){
+        var authenticationState = await authenticationStateTask;
+        if(authenticationState is not null)
+            Username = authenticationState.User.Identity.Name;
+
+    }
+
+}

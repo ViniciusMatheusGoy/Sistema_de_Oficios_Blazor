@@ -1,0 +1,63 @@
+@page "/login"
+@using System.Security.Claims
+@inject DbContextBanco _dbContextBanco
+@inject NavigationManager NavigationManager
+@using Microsoft.AspNetCore.Authentication
+@using Microsoft.AspNetCore.Authentication.Cookies;
+<div class="row">
+    <div class="col-lg-4 offset-lg-4 pt-4 border">
+        <EditForm Model="@Model" OnValidSubmit="Authenticate" FormName="LoginForm">
+            <DataAnnotationsValidator />
+            <div class="mb-3 text-center flex-column">
+                <h3>Login</h3>
+            </div>
+            <div class="mb-3">
+                <label>CPF</label>
+                <InputText @bind-Value="@Model.CPF" class="form-control" aria-placeholder="Usuario"/>
+                <ValidationMessage For="@(() => Model.CPF)" />
+            </div>
+            <div class="mb-3">
+                <label>Senha</label>
+                <InputText @bind-Value="@Model.Senha" class="form-control" aria-placeholder="Senha" type="password"/>
+                <ValidationMessage For="@(() => Model.Senha)" />
+            </div>
+            <div class="mb-3 text-center">
+                <span class="text-danger">@errorMessage</span>
+            </div>
+            <div class="mb-3 d-grid gap-2">
+                <button type="submit" class="btn btn-primary">Login</button>
+            </div>
+        </EditForm>
+
+            
+    </div>
+</div>
+
+@code{
+    [CascadingParameter]
+    public HttpContext? HttpContext { get; set; }
+    [SupplyParameterFromForm]
+    public LoginViewModel Model { get; set; } = new();
+
+private string? errorMessage;
+    private async Task Authenticate()
+    {
+        var usuario = _dbContextBanco.Usuarios.Where(u => u.CPF == Model.CPF).FirstOrDefault();
+        if(usuario is null || usuario.SenhaHash != Model.Senha)
+        {
+            
+            errorMessage = "CPF ou senha inválidos";
+            return;
+        }
+        var claims = new List<Claim>
+        {
+            new Claim(ClaimTypes.Name, usuario.Nome),
+            new Claim(ClaimTypes.Role, usuario.Role)
+        };
+
+        var identity = new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var principal = new ClaimsPrincipal(identity);
+        await HttpContext.SignInAsync(principal);
+        NavigationManager.NavigateTo("/");
+    }
+}    

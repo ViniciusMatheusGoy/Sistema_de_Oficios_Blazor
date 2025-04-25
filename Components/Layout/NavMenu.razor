@@ -1,0 +1,89 @@
+﻿
+<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Gerenciamento Ivaí</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="flex-column">
+        <div class="nav-item px-3">
+            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Home
+            </NavLink>
+        </div>
+
+
+        <AuthorizeView Roles="admin,user">
+            <Authorized>
+        <div class="nav-item px-3" id="oficios-toggle" onclick="toggleOficiosList()" style="cursor: pointer;">
+            <NavLink class="nav-link">
+                <span class="bi bi-list-nested-nav-menu" aria-hidden="true"></span> Oficios
+            </NavLink>
+        </div>
+                    <div id="oficios-list" class="submenu" style="padding-left: 20px;">
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="oficios-novo">
+                                Novo Ofício
+                            </NavLink>
+                        </div>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="oficios-enviados">
+                                Enviados
+                            </NavLink>
+                        </div>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="oficios-recebidos">
+                                Recebidos
+                            </NavLink>
+                        </div>
+                    </div>
+            </Authorized>
+        </AuthorizeView>
+        <AuthorizeView Roles="admin">
+            <Authorized>
+        <div class="nav-item px-3" id="administracao-toggle" onclick="toggleAdministracaoList()" style="cursor: pointer;">
+            <NavLink class="nav-link">
+                 Administração
+            </NavLink>
+        </div>
+                    <div id="administracao-list" class="submenu" style="padding-left: 20px;">
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="adm-setores">
+                                <span class="bi bi-list-nested-nav-menu"></span>Setores
+                            </NavLink>
+                        </div>
+                        <div class="nav-item px-3">
+                            <NavLink class="nav-link" href="adm-usuarios">
+                                Usuários
+                            </NavLink>
+                        </div>
+                    </div>
+            </Authorized>
+        </AuthorizeView>
+        
+    </nav>
+</div>
+
+<script>
+    function toggleOficiosList() {
+        var OfcList = document.getElementById('oficios-list');
+        OfcList.classList.toggle('active');
+        var admList = document.getElementById('administracao-list');
+        if(admList.classList.contains('active')){
+            admList.classList.remove('active');
+        }
+        //admList.classList.toggle('active');
+    }
+    function toggleAdministracaoList() {
+        var admList = document.getElementById('administracao-list');
+        admList.classList.toggle('active');
+        var OfcList = document.getElementById('oficios-list');
+        if(OfcList.classList.contains('active')){
+            OfcList.classList.remove('active');
+        }
+    }
+</script>
+

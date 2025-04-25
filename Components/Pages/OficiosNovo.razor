@@ -1,0 +1,5 @@
+@page "/oficios-novo"
+@using Microsoft.AspNetCore.Authorization
+@attribute [Authorize(Roles="admin,user")]
+
+<PageTitle>Novo Oficio</PageTitle>
